@@ -49,7 +49,45 @@ coefs = np.ones(n_features + 1)
 predictions_by_defn = X @ coefs[1:] + coefs[0]
 
 # Append a column of 1's in X (similar to what chiru did) Predictions must be same
+"""
+X_before = [
+    [feature1_1, feature2_1, feature3_1],
+    [feature1_2, feature2_2, feature3_2],
+    [feature1_3, feature2_3, feature3_3],
+    ...
+]
+"""
+
 X = np.hstack((np.ones((n_samples, 1)), X))
+
+"""
+X_after = [
+    [1, feature1_1, feature2_1, feature3_1],
+    [1, feature1_2, feature2_2, feature3_2],
+    [1, feature1_3, feature2_3, feature3_3],
+    ...
+]
+This is done to handle the bias term (intercept) in linear regression. Instead of having to separately add the bias term b in the equation:
+Before :-
+y = X @ coefs + b
+
+After :-
+y = X @ coefs
+
+y = b + w1*x1 + w2*x2 + w3*x3
+
+Now, 
+
+y = w0*1 + w1*x1 + w2*x2 + w3*x3 
+
+Where w0 is the bias = b
+
+This allows us to handle all coefficients (including bias) in a single matrix multiplication operation: X @ coefs
+
+Without haveing to write predictions = X @ coefs + b
+Cutely we can write predictions = X @ coefs
+
+"""
 
 predictions = X @ coefs 
 
@@ -232,6 +270,8 @@ U, S, Vt = np.linalg.svd(X, full_matrices=False)
 S_inv = np.diag(1 / S)
 
 # Calculate the coefficients using SVD
+# coefs = Pseudo inverse of X @ y
+# Since X is not invertible, we use the pseudo inverse
 coefs_svd = Vt.T @ S_inv @ U.T @ y
 
 # Save the coefs_svd into a csv file
