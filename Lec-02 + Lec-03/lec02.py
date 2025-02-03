@@ -136,7 +136,7 @@ loss_matrix = (y - X @ coefs).T @ (y - X @ coefs) / n_samples
 grad_matrix = -2/n_samples * X.T @ (y - X @ coefs)
 
 # Set grad_matrix = 0 we get the NORMAL equation
-# X.T @ X @ coefs - X.T @ y
+# X.T @ X @ coefs = X.T @ y
 
 coefs = np.linalg.inv(X.T @ X) @ X.T @ y 
 
@@ -263,7 +263,7 @@ print(f"L2 norm of relative errors (QR): {np.linalg.norm(rel_errors_qr)}")
 # Turns out SVD OF X == EIGEN decomp of A
 
 # TODO :- Calculate the coefs using SVD
-# SVD of X
+# SVD of X = U @ S @ Vt
 U, S, Vt = np.linalg.svd(X, full_matrices=False)
 
 # Compute the pseudo-inverse of the singular values
@@ -272,6 +272,9 @@ S_inv = np.diag(1 / S)
 # Calculate the coefficients using SVD
 # coefs = Pseudo inverse of X @ y
 # Since X is not invertible, we use the pseudo inverse
+
+# Or coefs = X.T @ X @ X.T @ y and substitute X = U @ S @ Vt
+# You will get the same result
 coefs_svd = Vt.T @ S_inv @ U.T @ y
 
 # Save the coefs_svd into a csv file
@@ -291,6 +294,20 @@ print(f"L2 norm of relative errors (SVD): {np.linalg.norm(rel_errors_svd)}")
 # Now that we have the coefs of the SVD method. Plot the predictions and the fit line for these coefficients
 # First let us plot between square feet and price
 
+"""
+We create a range here ONLY FOR VISUALIZATION PURPOSES.
+I want to see how price varies with square feet.
+So i keep all other features constant at their mean values, as done in line 310
+# Now Meddling with sq_ft column :- We can do 2 things :-
+1) Plot the actual sq_ft values vs price
+2) Plot a continuous range of sq_ft values vs price
+
+We will do the 2nd one.
+This is mainly because if i directly plot the actual sq_ft values vs price, the plot will be very zig zag as the points (sq_ft values) are not evenly 
+spaced or distributed.
+
+So we create a continuous range of sq_ft values and plot the fit line for these values.
+"""
 # Create a range of square feet values for plotting
 sq_ft_min = X[:, 1].min()
 sq_ft_max = X[:, 1].max()
