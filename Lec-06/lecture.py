@@ -43,15 +43,20 @@ def mse_lin_reg(X, y, theta):
 # Make a gradient of the objective function
 def grad_mse_lin_reg(X, y, theta):
     n_samples = X.shape[0]
+
+    # dim of X = (n_samples, n_features + 1) = (100, 2)
+    # dim of y = (n_samples, 1) = (100, 1)
+    # dim of theta = (n_features + 1, 1) = (2, 1)
+    # dim of grad = (n_features + 1, 1) = (2, 1) ??
     return 2 * X.T @ (X @ theta - y) / n_samples
 
 # Make a gradient descent function
 step_size = 0.01
-n_steps = 100000
+n_steps = 1000
 
 n_samples = X.shape[0]
 n_features = X.shape[1]
-theta_0 = np.array([[2], [2]])  # Random initialization
+theta_0 = np.array([[2], [2]])
 
 
 def gradient_descent(X, y, theta_0, step_size, n_steps, mse_lin_reg, grad_mse_lin_reg):
@@ -67,8 +72,8 @@ def gradient_descent(X, y, theta_0, step_size, n_steps, mse_lin_reg, grad_mse_li
         if i > n_steps:
             break
 
-        if i % 100 == 0:
-            print(f"Step {i}, theta: {theta}, mse: {mse_lin_reg(X, y, theta)}")
+        #if i % 100 == 0:
+            #print(f"Step {i}, theta: {theta}, mse: {mse_lin_reg(X, y, theta)}")
         i += 1
 
     return theta, path
@@ -88,7 +93,7 @@ def plot_contour(X, y, path, mse_lin_reg, step_size):
             mse_vals[i, j] = mse_lin_reg(X, y, theta)
 
     plt.figure(figsize=(8, 6))
-    contour = plt.contourf(theta0_grid, theta1_grid, mse_vals, levels=np.linspace(mse_vals.min(), mse_vals.max(), 25), cmap='viridis')
+    contour = plt.contourf(theta0_grid, theta1_grid, mse_vals, levels=np.linspace(mse_vals.min(), mse_vals.max(), 25), cmap='Blues')
     plt.colorbar(contour)
 
     # Convert path list to array for plotting
@@ -113,4 +118,39 @@ theta, path = gradient_descent(X, y, theta_0, step_size, n_steps, mse_lin_reg, g
 plot_contour(X, y, path, mse_lin_reg, step_size)
 
 
+"""
+################################################################################
+# What is different between this Function and the ones we have seen before ?
+################################################################################    
 
+
+This function is as follows :-
+
+a) mse_lin_reg(X, y, theta)
+
+This function takes 3 arguments :-
+1) X :- (n_samples, n_features)
+2) y :- (n_samples, 1)
+3) theta :- (n_features, 1)
+--> Want to find the 'theta' such that this function is minimized
+
+The functions we saw before were of the form :- 
+b) f(theta) = theta[0] ^ 2 + theta[1] ^ 2 or smnthg like that
+--> Want to find the 'theta' such that this function is minimized
+
+
+* So notice that in (a), the function depends on X, y AND theta
+* So notice that in (b), the function depends only on theta
+* In both cases we want to find the optimal theta
+
+# The speciality in (a) is that, if we change X or y, the function changes even if theta is kept constant
+# In (b), obviously, if we keep theta constant, then f(theta) is constant
+
+So for a meshgrid of theta0 and theta1, and a given X, y. We can plot the contour of the mse_lin_reg(X, y, theta)
+
+When we change X or y, the contour changes, FOR THE SAME THETA MESHGRID
+"""
+
+"""
+# This is where sir gave an INTRO TO STOCHASTIC GRADIENT DESCENT
+"""
